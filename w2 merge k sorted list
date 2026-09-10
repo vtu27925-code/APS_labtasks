@@ -3,46 +3,46 @@ You are given an array of k linked-lists lists, each linked-list is sorted in as
 Merge all the linked-lists into one sorted linked-list and return it.
 
 ```java
+import java.util.PriorityQueue;
+
 class Solution {
-    public boolean isPalindrome(ListNode head) {
 
-        // Step 1: Find the middle
-        ListNode slow = head;
-        ListNode fast = head;
+    public ListNode mergeKLists(ListNode[] lists) {
 
-        while (fast != null && fast.next != null) {
-            slow = slow.next;
-            fast = fast.next.next;
-        }
+        // Min-heap to store the smallest node
+        PriorityQueue<ListNode> pq =
+            new PriorityQueue<>((a, b) -> a.val - b.val);
 
-        // Step 2: Reverse the second half
-        ListNode prev = null;
-        ListNode current = slow;
-
-        while (current != null) {
-            ListNode next = current.next;
-            current.next = prev;
-            prev = current;
-            current = next;
-        }
-
-        // Step 3: Compare both halves
-        ListNode first = head;
-        ListNode second = prev;
-
-        while (second != null) {
-            if (first.val != second.val) {
-                return false;
+        // Add the first node of every list
+        for (ListNode list : lists) {
+            if (list != null) {
+                pq.offer(list);
             }
-
-            first = first.next;
-            second = second.next;
         }
 
-        return true;
+        // Dummy node to build the result
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+
+        // Keep taking the smallest node
+        while (!pq.isEmpty()) {
+
+            ListNode node = pq.poll();
+
+            current.next = node;
+            current = current.next;
+
+            // Add the next node from the same list
+            if (node.next != null) {
+                pq.offer(node.next);
+            }
+        }
+
+        return dummy.next;
     }
 }
 ```
+
  
 
 Example 1:
